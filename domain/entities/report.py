@@ -1,5 +1,5 @@
 from domain.entities.position import Position
-from infrastructure.util.math_calculator import get_return_list
+from infrastructure.util.math_calculator import get_return_list, get_round
 import json
 
 NAME_IS_OPEN = "IsOpen"
@@ -43,12 +43,13 @@ class Report:
                 NAME_RPPP: []
             }
             self.positions[po.id][NAME_IS_OPEN] = po.is_opens
-            self.positions[po.id][NAME_PRICE] = po.prices
-            self.positions[po.id][NAME_PRICE] = po.target_prices
-            self.positions[po.id][NAME_VALUE] = [s * po.quantity for s in po.target_prices]
-            R, RP = get_return_list(value_list=self.positions[po.id][NAME_VALUE], open_type=po.open_transaction_type)
-            self.positions[po.id][NAME_RPP] = R
-            self.positions[po.id][NAME_RPPP] = RP
+            self.positions[po.id][NAME_PRICE] = [get_round(i) for i in po.prices]
+            self.positions[po.id][NAME_PRICE] = [get_round(i) for i in po.target_prices]
+            self.positions[po.id][NAME_VALUE] = [get_round(s * po.quantity) for s in po.target_prices]
+            R, RP = get_return_list(value_list=self.positions[po.id][NAME_VALUE], open_type=po.open_transaction_type,
+                                    close_index=po.get_close_index())
+            self.positions[po.id][NAME_RPP] = [get_round(i) for i in R]
+            self.positions[po.id][NAME_RPPP] = [get_round(i) for i in RP]
 
     def check_position_ready(self, position: Position):
         return len(position.dates) == len(self.dates)
@@ -66,14 +67,14 @@ class Report:
             values.append(v[NAME_VALUE])
             rpp.append(v[NAME_RPP])
             rppp.append(v[NAME_RPPP])
-        self.basket[NAME_IS_OPEN] = [sum(c) for c in zip(*is_opens)]
-        self.basket[NAME_PRICE] = [sum(c) for c in zip(*prices)]
-        self.basket[NAME_VALUE] = [sum(c) for c in zip(*values)]
+        self.basket[NAME_IS_OPEN] = [get_round(sum(c)) for c in zip(*is_opens)]
+        self.basket[NAME_PRICE] = [get_round(sum(c)) for c in zip(*prices)]
+        self.basket[NAME_VALUE] = [get_round(sum(c))for c in zip(*values)]
         self.basket[NAME_IS_OPEN] = [1 if x >= 1 else x for x in self.basket[NAME_IS_OPEN]]
         # self.basket[NAME_RPP] = [sum(c) for c in zip(*rpp)]
         # self.basket[NAME_RPPP] = [sum(c) for c in zip(*rppp)]
         R, RP = get_return_list(value_list=self.basket[NAME_VALUE])
-        self.basket[NAME_RPP] = R
-        self.basket[NAME_RPPP] = RP
+        self.basket[NAME_RPP] = [get_round(i) for i in R]
+        self.basket[NAME_RPPP] = [get_round(i) for i in RP]
 
 

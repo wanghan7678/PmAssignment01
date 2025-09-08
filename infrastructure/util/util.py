@@ -51,3 +51,15 @@ def remove_leading_trailing_zeros(lst):
 
     return result, leading_zeros, trailing_zeros
 
+def remove_leading_zeros(lst):
+    leading_zeros = 0
+    for num in lst:
+        if num == 0:
+            leading_zeros += 1
+        else:
+            break
+    if leading_zeros >= len(lst):
+        result = []
+    else:
+        result = lst[leading_zeros:]
+    return result, leading_zeros

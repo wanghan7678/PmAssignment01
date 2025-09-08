@@ -51,3 +51,11 @@ class Position:
         except ValueError:
             return
 
+    def get_close_index(self):
+        if not self.close_price:
+            return None
+        try:
+            return self.dates.index(self.close_date)
+        except ValueError:
+            return None
+
