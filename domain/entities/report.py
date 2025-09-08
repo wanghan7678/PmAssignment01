@@ -70,10 +70,10 @@ class Report:
         self.basket[NAME_PRICE] = [sum(c) for c in zip(*prices)]
         self.basket[NAME_VALUE] = [sum(c) for c in zip(*values)]
         self.basket[NAME_IS_OPEN] = [1 if x >= 1 else x for x in self.basket[NAME_IS_OPEN]]
-        self.basket[NAME_RPP] = [sum(c) for c in zip(*rpp)]
-        self.basket[NAME_RPPP] = [sum(c) for c in zip(*rppp)]
-        # R, RP = get_return_list(value_list=self.basket[NAME_VALUE])
-        # self.basket[NAME_RPP] = R
-        # self.basket[NAME_RPPP] = RP
+        # self.basket[NAME_RPP] = [sum(c) for c in zip(*rpp)]
+        # self.basket[NAME_RPPP] = [sum(c) for c in zip(*rppp)]
+        R, RP = get_return_list(value_list=self.basket[NAME_VALUE])
+        self.basket[NAME_RPP] = R
+        self.basket[NAME_RPPP] = RP
 
 

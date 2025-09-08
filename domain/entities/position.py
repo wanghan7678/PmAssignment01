@@ -24,6 +24,7 @@ class Position:
         self.is_opens = []
         self.target_currency = DEFAULT_TARGET_CURRENCY
         self.target_prices = []
+        self.target_values = []
 
 
     def check_ready(self):
@@ -39,14 +40,14 @@ class Position:
             i = self.dates.index(self.open_date)
             self.prices[i] = self.open_price
         except ValueError:
-            pass
+            return
 
     def close_price_amend(self):
         if not self.close_price:
-            pass
+            return
         try:
             i = self.dates.index(self.close_date)
             self.prices[i] = self.close_price
         except ValueError:
-            pass
+            return
 
