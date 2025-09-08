@@ -12,7 +12,7 @@ PM_API_HEADER = {
 
 class PmReaderImpl(PmReader):
 
-    def read_instrument_prices(self, instrument_id: int, dates: []) -> list:
+    def read_instrument_prices(self, instrument_id: int, dates: list) -> list:
         url = settings.PERRORMATIV_API_URL_INSTRUMENT_PRICE
         parms = {"instrument_id": str(instrument_id), "start_date": date_to_pm_format(dates[0]),
                  "end_date": date_to_pm_format(dates[-1])}
@@ -29,7 +29,7 @@ class PmReaderImpl(PmReader):
         else:
             raise ValueError("API response does not contain data.")
 
-    def read_fx_rates(self, pair: str, dates: []) -> list:
+    def read_fx_rates(self, pair: str, dates: list) -> list:
         url = settings.PERFORMATIV_API_URL_FX_RATE
         parms = {"pairs": pair, "start_date": date_to_pm_format(dates[0]),
                  "end_date": date_to_pm_format(dates[-1])}

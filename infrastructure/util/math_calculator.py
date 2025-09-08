@@ -3,7 +3,7 @@ from infrastructure.util.util import remove_leading_trailing_zeros, remove_leadi
 NUMBER_OF_DECIMALS = 8
 
 
-def get_return_list(value_list: [], open_type="BUY", close_index=None) -> []:
+def get_return_list(value_list: list, open_type="BUY", close_index=None):
     # cal_list, leading, trailing = remove_leading_trailing_zeros(value_list)
     cal_list, leading = remove_leading_zeros(value_list)
     R = [0] + [(cal_list[i] - cal_list[i - 1]) for i in range(1, len(cal_list))]

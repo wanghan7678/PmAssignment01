@@ -12,7 +12,7 @@ NAME_DATE = "dates"
 
 class Report:
 
-    def __init__(self, dates: []):
+    def __init__(self, dates: list):
         self.positions = dict()
         self.basket = dict()
         self.dates = dates
@@ -29,7 +29,7 @@ class Report:
     def __len__(self):
         return self.length
 
-    def fill_positions(self, positions: []):
+    def fill_positions(self, positions: list):
         for po in positions:
             if not isinstance(po, Position):
                 raise ValueError("The input position is not a Position type.")
