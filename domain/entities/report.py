@@ -1,6 +1,6 @@
 from domain.entities.position import Position
 from infrastructure.util.math_calculator import get_return_list, get_round
-import json
+from infrastructure.util.util import fill_empty
 
 NAME_IS_OPEN = "IsOpen"
 NAME_PRICE = "Price"
@@ -33,8 +33,6 @@ class Report:
         for po in positions:
             if not isinstance(po, Position):
                 raise ValueError("The input position is not a Position type.")
-            if not self.check_position_ready(po):
-                raise ValueError("Position data not ready.")
             self.positions[po.id] = {
                 NAME_IS_OPEN: [],
                 NAME_PRICE: [],
@@ -42,14 +40,15 @@ class Report:
                 NAME_RPP: [],
                 NAME_RPPP: []
             }
-            self.positions[po.id][NAME_IS_OPEN] = po.is_opens
-            self.positions[po.id][NAME_PRICE] = [get_round(i) for i in po.prices]
-            self.positions[po.id][NAME_PRICE] = [get_round(i) for i in po.target_prices]
-            self.positions[po.id][NAME_VALUE] = [get_round(s * po.quantity) for s in po.target_prices]
-            R, RP = get_return_list(value_list=self.positions[po.id][NAME_VALUE], open_type=po.open_transaction_type,
-                                    close_index=po.get_close_index())
-            self.positions[po.id][NAME_RPP] = [get_round(i) for i in R]
-            self.positions[po.id][NAME_RPPP] = [get_round(i) for i in RP]
+            prices = [get_round(i) for i in po.target_prices]
+            values = [get_round(i) for i in po.target_values]
+            R = [get_round(i) for i in po.target_rpp]
+            RP = [get_round(i) for i in po.target_rppp]
+            self.positions[po.id][NAME_IS_OPEN] = fill_empty(dates=self.dates, values=po.is_opens, value_start=po.start_date, value_end=po.end_date)
+            self.positions[po.id][NAME_PRICE] = fill_empty(dates=self.dates, values=prices, value_start=po.start_date, value_end=po.end_date)
+            self.positions[po.id][NAME_VALUE] = fill_empty(dates=self.dates, values=values, value_start=po.start_date, value_end=po.end_date)
+            self.positions[po.id][NAME_RPP] = fill_empty(dates=self.dates, values=R, value_start=po.start_date, value_end=po.end_date)
+            self.positions[po.id][NAME_RPPP] = fill_empty(dates=self.dates, values=RP, value_start=po.start_date, value_end=po.end_date)
 
     def check_position_ready(self, position: Position):
         return len(position.dates) == len(self.dates)
@@ -72,10 +71,10 @@ class Report:
         self.basket[NAME_PRICE] = [0] * len(self.dates)
         self.basket[NAME_VALUE] = [get_round(sum(c))for c in zip(*values)]
         self.basket[NAME_IS_OPEN] = [1 if x >= 1 else x for x in self.basket[NAME_IS_OPEN]]
-        # self.basket[NAME_RPP] = [sum(c) for c in zip(*rpp)]
-        # self.basket[NAME_RPPP] = [sum(c) for c in zip(*rppp)]
-        R, RP = get_return_list(value_list=self.basket[NAME_VALUE])
-        self.basket[NAME_RPP] = [get_round(i) for i in R]
-        self.basket[NAME_RPPP] = [get_round(i) for i in RP]
+        self.basket[NAME_RPP] = [sum(c) for c in zip(*rpp)]
+        self.basket[NAME_RPPP] = [sum(c) for c in zip(*rppp)]
+        # R, RP = get_return_list(value_list=self.basket[NAME_VALUE])
+        # self.basket[NAME_RPP] = [get_round(i) for i in R]
+        # self.basket[NAME_RPPP] = [get_round(i) for i in RP]
 
 

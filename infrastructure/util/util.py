@@ -63,3 +63,15 @@ def remove_leading_zeros(lst):
     else:
         result = lst[leading_zeros:]
     return result, leading_zeros
+
+
+def fill_empty(dates: list, values: list, value_start: date, value_end: date) -> list:
+    if len(dates) == len(values):
+        return values
+    results = [0] * len(dates)
+    start_index = dates.index(value_start)
+    end_index = dates.index(value_end)
+    for i in range(start_index, end_index + 1):
+        if i < len(dates):
+            results[i] = values[i - start_index]
+    return results

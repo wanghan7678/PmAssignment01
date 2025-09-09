@@ -22,22 +22,13 @@ def generate_is_opens(position: Position) -> list:
         end_index = len(dates) - 1 if end > dates[-1] else -1
     if start_index == len(dates) or end_index == -1:
         return result
-    for i in range(start_index, end_index + 1):
+    for i in range(start_index, end_index):
         if i < len(dates):
             result[i] = is_open_value
     return result
 
 
-def fill_empty(dates: list, values: list, value_start: date, value_end: date) -> list:
-    if len(dates) == len(values):
-        return values
-    results = [0] * len(dates)
-    start_index = dates.index(value_start)
-    end_index = dates.index(value_end)
-    for i in range(start_index, end_index + 1):
-        if i < len(dates):
-            results[i] = values[i - start_index]
-    return results
+
 
 
 def get_price_query(position: Position) -> list:
@@ -69,32 +60,46 @@ def create_positions_from_json(json_str: str) -> list:
 
 class PositionServices:
 
-    def __init__(self, pm_reader: PmReader, positions: []):
+    def __init__(self, pm_reader: PmReader):
         self.pm_reader = pm_reader
-        self.positions = positions
+        self.positions = None
         if not pm_reader:
             raise ValueError("PmReader cannot be null.")
-        if not positions:
-            raise ValueError("Position list cannot be empty.")
+
+    def load_from_json(self, json_str: str):
+        self.positions = create_positions_from_json(json_str)
 
     def fill_positions(self, target_currency: str, start_date: date, end_date: date):
         for po in self.positions:
-            if po.open_date > end_date or (po.close_date and po.close_date < start_date):
-                raise ValueError("Report date out of the position scope.")
-            dates = generate_date_list(start_date=start_date, end_date=end_date)
-            po.dates = dates
-            query_dates = get_price_query(po)
-            prices = self.pm_reader.read_instrument_prices(instrument_id=po.instrument_id, dates=query_dates)
+            po.start_date = start_date
+            po.end_date = end_date
+            # init dates
+            po.init_dates()
+            # read prices
+            po.prices = self.pm_reader.read_instrument_prices(instrument_id=po.instrument_id, dates=po.dates)
+            # read fx-rates
             if po.instrument_currency == target_currency:
-                fx_rates = [1] * len(dates)
+                fx_rates = [1] * po.report_length
+                po.target_rates = fx_rates
+                po.open_target_price = po.open_price
+                i = po.get_close_index()
+                if i:
+                    po.close_target_price = po.close_price
             else:
                 pair = po.instrument_currency + target_currency
-                fx_rates = self.pm_reader.read_fx_rates(pair=pair, dates=dates)
-            po.prices = fill_empty(dates=po.dates, values=prices, value_start=query_dates[0], value_end=query_dates[-1])
+                fx_rates = self.pm_reader.read_fx_rates(pair=pair, dates=po.dates)
+                po.target_rates = fx_rates
+                i = po.get_open_index()
+                if i:
+                    po.open_target_price = po.open_price * fx_rates[i]
+                i = po.get_close_index()
+                if i:
+                    po.close_target_price = po.close_price * fx_rates[i]
             po.open_price_amend()
             po.close_price_amend()
-            po.target_prices = [a * b for a, b in zip(po.prices, fx_rates)]
-            po.is_opens = generate_is_opens(po)
+            po.fill_values()
+            po.set_is_opens()
+            po.cal_returns()
         return self.positions
 
     def create_report(self, start_date: date, end_date: date):
