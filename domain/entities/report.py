@@ -68,7 +68,8 @@ class Report:
             rpp.append(v[NAME_RPP])
             rppp.append(v[NAME_RPPP])
         self.basket[NAME_IS_OPEN] = [get_round(sum(c)) for c in zip(*is_opens)]
-        self.basket[NAME_PRICE] = [get_round(sum(c)) for c in zip(*prices)]
+        # self.basket[NAME_PRICE] = [get_round(sum(c)) for c in zip(*prices)]
+        self.basket[NAME_PRICE] = [0] * len(self.dates)
         self.basket[NAME_VALUE] = [get_round(sum(c))for c in zip(*values)]
         self.basket[NAME_IS_OPEN] = [1 if x >= 1 else x for x in self.basket[NAME_IS_OPEN]]
         # self.basket[NAME_RPP] = [sum(c) for c in zip(*rpp)]
