@@ -37,8 +37,6 @@ class Position:
         self.target_values = []
         self.target_rpp = []
         self.target_rppp = []
-        self.open_target_price = None
-        self.close_target_price = None
         self.report_length = None
 
     def init_dates(self):
@@ -68,23 +66,19 @@ class Position:
             raise ValueError(f"Position {self.id}: target rates contains empty.")
 
     def set_is_opens(self):
-        if not self.close_price:
-            self.is_opens = [0] * len(self.dates)
-        else:
-            self.is_opens = [1] * len(self.dates)
+        self.is_opens = [1] * self.report_length
+        if self.if_close_in_dates():
+            self.is_opens[-1] = 0
 
 
     def cal_returns(self):
         close_day_value = self.close_day_price * self.quantity if self.close_day_price else None
         open_day_value = self.open_day_price * self.quantity if self.open_day_price else None
         R, RP = get_returns(value_list=self.target_values, open_type=self.open_transaction_type,
-                           open_value=open_day_value,
-                           close_value=close_day_value)
+                           open_day_value=open_day_value)
         self.target_rpp = R
         self. target_rppp = RP
         logger.info(f"{self.id}: R={str(R)}, close={str(RP)}")
-
-
 
 
     def check_ready(self):
@@ -95,37 +89,18 @@ class Position:
         self.close_price = close_price
         self.close_date = close_date
 
-
     def close_price_amend(self):
-        if not self.close_price:
-            return
-        try:
-            i = self.dates.index(self.close_date)
-            self.close_day_price = self.prices[i]
-            self.prices[i] = self.close_price
-        except ValueError:
-            return
+        if self.close_date and self.close_date == self.end_date:
+            self.close_day_price = self.prices[-1]
+            self.prices[-1] = self.close_price
 
     def open_price_amend(self):
-        try:
-            i = self.dates.index(self.open_date)
-            self.open_day_price = self.prices[i]
-            self.prices[i] = self.open_price
-        except ValueError:
-            return
+        if self.start_date == self.open_date:
+            self.open_day_price = self.prices[0]
+            self.prices[0] = self.open_price
 
-    def get_close_index(self):
-        if not self.close_price:
-            return None
-        try:
-            return self.dates.index(self.close_date)
-        except ValueError:
-            return None
+    def if_open_in_dates(self):
+        return self.open_date == self.start_date
 
-    def get_open_index(self):
-        try:
-            return self.dates.index(self.open_date)
-        except ValueError:
-            return None
-
-
+    def if_close_in_dates(self):
+        return self.close_date and self.close_date == self.end_date

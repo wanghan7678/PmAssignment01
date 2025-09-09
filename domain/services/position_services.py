@@ -81,20 +81,10 @@ class PositionServices:
             if po.instrument_currency == target_currency:
                 fx_rates = [1] * po.report_length
                 po.target_rates = fx_rates
-                po.open_target_price = po.open_price
-                i = po.get_close_index()
-                if i:
-                    po.close_target_price = po.close_price
             else:
                 pair = po.instrument_currency + target_currency
                 fx_rates = self.pm_reader.read_fx_rates(pair=pair, dates=po.dates)
                 po.target_rates = fx_rates
-                i = po.get_open_index()
-                if i:
-                    po.open_target_price = po.open_price * fx_rates[i]
-                i = po.get_close_index()
-                if i:
-                    po.close_target_price = po.close_price * fx_rates[i]
             po.open_price_amend()
             po.close_price_amend()
             po.fill_values()

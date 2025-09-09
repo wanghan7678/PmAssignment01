@@ -5,7 +5,7 @@ logging.basicConfig(filename='myapp.log', level=logging.INFO)
 
 NUMBER_OF_DECIMALS = 8
 
-def get_returns(value_list: list, open_type="BUY", open_value=None, close_value=None) -> list:
+def get_returns(value_list: list, open_type="BUY", open_day_value=None) -> list:
     R = [0] + [(value_list[i] - value_list[i-1]) for i in range(1, len(value_list))]
     RP = [0] + [(value_list[i] - value_list[i-1]) / value_list[i-1]
                 if value_list[i-1] != 0
@@ -13,12 +13,9 @@ def get_returns(value_list: list, open_type="BUY", open_value=None, close_value=
                 for i in
                 range(1, len(value_list))
                 ]
-    if open_value and value_list[0] != 0:
-        R[0] = (value_list[0] - open_value)
-        RP[0] = ((value_list[0] - open_value) / value_list[0])
-    if close_value and value_list[0] != 0:
-        R[-1] = (value_list[-1] - close_value)
-        RP[-1] = ((value_list[-1] - close_value) / value_list[-1])
+    if open_day_value and value_list[0] != 0:
+        R[0] = (open_day_value - value_list[0])
+        RP[0] = (R[0] / value_list[0])
     if open_type == "SELL":
         R = [-x for x in R]
         RP = [-x for x in RP]
