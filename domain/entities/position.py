@@ -68,26 +68,11 @@ class Position:
             raise ValueError(f"Position {self.id}: target rates contains empty.")
 
     def set_is_opens(self):
-        is_open_value = 1
-        start = self.open_date
-        end = self.close_date if self.close_date else self.dates[-1]
-        result = [0] * self.report_length
-        dates = self.dates
-        try:
-            start_index = dates.index(start)
-        except ValueError:
-            start_index = 0 if start < dates[0] else len(dates)
-        try:
-            end_index = dates.index(end)
-        except ValueError:
-            end_index = len(dates) - 1 if end > dates[-1] else -1
-        if start_index == len(dates) or end_index == -1:
-            return result
-        for i in range(start_index, end_index):
-            if i < len(dates):
-                result[i] = is_open_value
-        self.is_opens = result
-        return self.is_opens
+        if not self.close_price:
+            self.is_opens = [0] * len(self.dates)
+        else:
+            self.is_opens = [1] * len(self.dates)
+
 
     def cal_returns(self):
         close_day_value = self.close_day_price * self.quantity if self.close_day_price else None
