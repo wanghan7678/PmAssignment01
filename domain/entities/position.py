@@ -1,9 +1,7 @@
 from datetime import date
 from infrastructure.util.util import generate_date_list
 from infrastructure.util.math_calculator import get_returns
-import logging
-logger = logging.getLogger(__name__)
-logging.basicConfig(filename='myapp.log', level=logging.INFO)
+
 
 DEFAULT_TARGET_CURRENCY = "USD"
 TRANSACTION_TYPE_BUY = "BUY"
@@ -72,13 +70,11 @@ class Position:
 
 
     def cal_returns(self):
-        close_day_value = self.close_day_price * self.quantity if self.close_day_price else None
         open_day_value = self.open_day_price * self.quantity if self.open_day_price else None
         R, RP = get_returns(value_list=self.target_values, open_type=self.open_transaction_type,
                            open_day_value=open_day_value)
         self.target_rpp = R
         self. target_rppp = RP
-        logger.info(f"{self.id}: R={str(R)}, close={str(RP)}")
 
 
     def check_ready(self):

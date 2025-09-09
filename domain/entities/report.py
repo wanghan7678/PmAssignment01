@@ -40,7 +40,7 @@ class Report:
                 NAME_RPP: [],
                 NAME_RPPP: []
             }
-            prices = [get_round(i) for i in po.target_prices]
+            prices = [get_round(i) for i in po.prices]
             values = [get_round(i) for i in po.target_values]
             R = [get_round(i) for i in po.target_rpp]
             RP = [get_round(i) for i in po.target_rppp]
