@@ -69,12 +69,14 @@ class Report:
         self.basket[NAME_IS_OPEN] = [get_round(sum(c)) for c in zip(*is_opens)]
         # self.basket[NAME_PRICE] = [get_round(sum(c)) for c in zip(*prices)]
         self.basket[NAME_PRICE] = [0] * len(self.dates)
-        self.basket[NAME_VALUE] = [get_round(sum(c))for c in zip(*values)]
+        self.basket[NAME_VALUE] = [get_round(sum(c)) for c in zip(*values)]
         self.basket[NAME_IS_OPEN] = [1 if x >= 1 else x for x in self.basket[NAME_IS_OPEN]]
-        self.basket[NAME_RPP] = [sum(c) for c in zip(*rpp)]
-        self.basket[NAME_RPPP] = [sum(c) for c in zip(*rppp)]
-        # R, RP = get_return_list(value_list=self.basket[NAME_VALUE])
-        # self.basket[NAME_RPP] = [get_round(i) for i in R]
-        # self.basket[NAME_RPPP] = [get_round(i) for i in RP]
+
+        self.basket[NAME_RPP] = [get_round(sum(c)) for c in zip(*rpp)]
+        self.basket[NAME_RPPP] = [0] + [get_round(self.basket[NAME_RPP][i] / self.basket[NAME_VALUE][i-1])
+                                        if self.basket[NAME_VALUE][i-1] != 0 else 0
+                                        for i in range(1, len(self.dates))]
+
+
 
 
