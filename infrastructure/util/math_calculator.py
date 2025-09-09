@@ -13,7 +13,7 @@ def get_returns(value_list: list, open_type="BUY", open_day_value=None) -> list:
                 range(1, len(value_list))
                 ]
     if open_day_value and value_list[0] != 0:
-        R[0] = (open_day_value - value_list[0])
+        R[0] = (open_day_value - value_list[0]) # value_list[0] is the open price value
         RP[0] = (R[0] / value_list[0])
     if open_type == "SELL":
         R = [-x for x in R]

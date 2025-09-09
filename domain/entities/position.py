@@ -21,6 +21,7 @@ class Position:
         self.open_day_price = None
         self.close_price = None
         self.close_day_price = None
+        self.close_target_value = None
         self.quantity = quantity
         self.transaction_costs = 0
         self.instrument_id = None
@@ -60,6 +61,10 @@ class Position:
         if self.target_rates and len(self.target_rates) == self.report_length:
             self.target_prices = [x * r for x, r in zip(self.prices, self.target_rates)]
             self.target_values = [p * self.quantity for p in self.target_prices]
+            if self.if_close_in_dates():
+                self.close_target_value = self.target_values[-1]
+                self.target_values[-1] = 0
+
         else:
             raise ValueError(f"Position {self.id}: target rates contains empty.")
 
@@ -71,7 +76,10 @@ class Position:
 
     def cal_returns(self):
         open_day_value = self.open_day_price * self.quantity if self.open_day_price else None
-        R, RP = get_returns(value_list=self.target_values, open_type=self.open_transaction_type,
+        values = [x for x in self.target_values]
+        if self.if_close_in_dates():
+            values[-1] = self.close_target_value
+        R, RP = get_returns(value_list=values, open_type=self.open_transaction_type,
                            open_day_value=open_day_value)
         self.target_rpp = R
         self. target_rppp = RP
