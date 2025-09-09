@@ -50,8 +50,6 @@ class Report:
             self.positions[po.id][NAME_RPP] = fill_empty(dates=self.dates, values=R, value_start=po.start_date, value_end=po.end_date)
             self.positions[po.id][NAME_RPPP] = fill_empty(dates=self.dates, values=RP, value_start=po.start_date, value_end=po.end_date)
 
-    def check_position_ready(self, position: Position):
-        return len(position.dates) == len(self.dates)
 
     def fill_baskets(self):
         prices = []

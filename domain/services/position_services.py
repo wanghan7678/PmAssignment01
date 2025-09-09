@@ -6,40 +6,6 @@ from infrastructure.util.util import json_str_to_date, generate_date_list, to_fl
 import json
 
 
-def generate_is_opens(position: Position) -> list:
-    is_open_value = 1
-    start = position.open_date
-    end = position.close_date if position.close_date else position.dates[-1]
-    result = [0] * len(position.dates)
-    dates = position.dates
-    try:
-        start_index = dates.index(start)
-    except ValueError:
-        start_index = 0 if start < dates[0] else len(dates)
-    try:
-        end_index = dates.index(end)
-    except ValueError:
-        end_index = len(dates) - 1 if end > dates[-1] else -1
-    if start_index == len(dates) or end_index == -1:
-        return result
-    for i in range(start_index, end_index):
-        if i < len(dates):
-            result[i] = is_open_value
-    return result
-
-
-
-
-
-def get_price_query(position: Position) -> list:
-    query_start = position.dates[0]
-    query_end = position.dates[-1]
-    if position.open_date > position.dates[0]:
-        query_start = position.open_date
-    if position.close_date and position.close_date < position.dates[-1]:
-        query_end = position.close_date
-    return generate_date_list(start_date=query_start, end_date=query_end)
-
 
 def create_positions_from_json(json_str: str) -> list:
     po_list = json.loads(json_str)

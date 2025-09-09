@@ -1,4 +1,3 @@
-from infrastructure.util.util import remove_leading_trailing_zeros, remove_leading_zeros
 import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='myapp.log', level=logging.INFO)
