@@ -7,27 +7,25 @@ import json
 
 
 def generate_is_opens(position: Position) -> list:
-    if position.is_open:
-        is_open_value = 1
-        start = position.open_date
-        end = position.close_date if position.close_date else position.dates[-1]
-        result = [0] * len(position.dates)
-        dates = position.dates
-        try:
-            start_index = dates.index(start)
-        except ValueError:
-            start_index = 0 if start < dates[0] else len(dates)
-        try:
-            end_index = dates.index(end)
-        except ValueError:
-            end_index = len(dates) - 1 if end > dates[-1] else -1
-        if start_index == len(dates) or end_index == -1:
-            return result
-        for i in range(start_index, end_index + 1):
-            if i < len(dates):
-                result[i] = is_open_value
+    is_open_value = 1
+    start = position.open_date
+    end = position.close_date if position.close_date else position.dates[-1]
+    result = [0] * len(position.dates)
+    dates = position.dates
+    try:
+        start_index = dates.index(start)
+    except ValueError:
+        start_index = 0 if start < dates[0] else len(dates)
+    try:
+        end_index = dates.index(end)
+    except ValueError:
+        end_index = len(dates) - 1 if end > dates[-1] else -1
+    if start_index == len(dates) or end_index == -1:
         return result
-    return [0] * len(position.dates)
+    for i in range(start_index, end_index + 1):
+        if i < len(dates):
+            result[i] = is_open_value
+    return result
 
 
 def fill_empty(dates: list, values: list, value_start: date, value_end: date) -> list:
