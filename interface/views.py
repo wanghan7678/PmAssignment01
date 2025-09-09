@@ -5,7 +5,6 @@ from domain.services.position_services import PositionServices, create_positions
 from infrastructure.util.util import json_str_to_date, to_float
 from infrastructure.pmapi.pm_reader_impl import PmReaderImpl
 from interface.serializers import ReportSerializer
-import json
 
 START_DATE = "2023-01-01"
 # START_DATE = "2024-11-01"

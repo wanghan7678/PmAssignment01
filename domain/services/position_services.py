@@ -85,10 +85,15 @@ class PositionServices:
                 pair = po.instrument_currency + target_currency
                 fx_rates = self.pm_reader.read_fx_rates(pair=pair, dates=po.dates)
                 po.target_rates = fx_rates
+            # change the start to open price, if start is the open
             po.open_price_amend()
+            # change the end to close price, if end is the close
             po.close_price_amend()
+            # calculate values, target price and target values
             po.fill_values()
+            # calculate is_open for each day
             po.set_is_opens()
+            # calculate RPP and RPP%
             po.cal_returns()
         return self.positions
 

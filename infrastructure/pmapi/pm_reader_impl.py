@@ -2,7 +2,6 @@ from domain.pmapi.pm_reader import PmReader
 from django.conf import settings
 import requests
 from infrastructure.util.util import date_to_pm_format, EMPTY_FILL_VALUE, date_to_json_str
-import json
 
 PM_API_HEADER = {
     "X-Api-Key": settings.PERFORMATIV_API_KEY,

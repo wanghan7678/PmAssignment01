@@ -1,5 +1,5 @@
 from domain.entities.position import Position
-from infrastructure.util.math_calculator import get_return_list, get_round
+from infrastructure.util.math_calculator import get_round
 from infrastructure.util.util import fill_empty
 
 NAME_IS_OPEN = "IsOpen"
@@ -53,7 +53,6 @@ class Report:
     def check_position_ready(self, position: Position):
         return len(position.dates) == len(self.dates)
 
-    # there are two method to calculate the
     def fill_baskets(self):
         prices = []
         is_opens = []
@@ -71,7 +70,6 @@ class Report:
         self.basket[NAME_PRICE] = [0] * len(self.dates)
         self.basket[NAME_VALUE] = [get_round(sum(c)) for c in zip(*values)]
         self.basket[NAME_IS_OPEN] = [1 if x >= 1 else x for x in self.basket[NAME_IS_OPEN]]
-
         self.basket[NAME_RPP] = [get_round(sum(c)) for c in zip(*rpp)]
         self.basket[NAME_RPPP] = [0] + [get_round(self.basket[NAME_RPP][i] / self.basket[NAME_VALUE][i-1])
                                         if self.basket[NAME_VALUE][i-1] != 0 else 0
