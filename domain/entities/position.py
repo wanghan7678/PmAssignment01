@@ -64,7 +64,6 @@ class Position:
             if self.if_close_in_dates():
                 self.close_target_value = self.target_values[-1]
                 self.target_values[-1] = 0
-
         else:
             raise ValueError(f"Position {self.id}: target rates contains empty.")
 
@@ -81,6 +80,10 @@ class Position:
             values[-1] = self.close_target_value
         R, RP = get_returns(value_list=values, open_type=self.open_transaction_type,
                            open_day_value=open_day_value)
+        if self.if_open_in_dates():
+            open_day_target_value = open_day_value * self.target_rates[0]
+            R[1] = (self.target_values[1] - open_day_target_value)
+            RP[1] = R[1] / open_day_target_value
         self.target_rpp = R
         self. target_rppp = RP
 
